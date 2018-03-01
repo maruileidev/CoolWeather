@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/ic_backup"
+        android:icon="@drawable/ic_power_settings_new_black_24dp"
+        android:title="@string/backup"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/del"
+        android:icon="@drawable/ic_card_membership_black_24dp"
+        android:title="@string/str_del"
+        app:showAsAction="always" />
+    <item android:id="@+id/others"
+        android:icon="@drawable/ic_done_black_24dp"
+        app:showAsAction="always"
+        android:title="@string/app_name"/>
+</menu>

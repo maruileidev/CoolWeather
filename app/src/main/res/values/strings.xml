@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">CoolWeather</string>
+    <string name="str_del">Delete</string>
+    <string name="backup">back up</string>
+</resources>
