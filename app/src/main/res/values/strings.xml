@@ -5,4 +5,7 @@
     <string name="str_createDB">Create database</string>
     <string name="str_createTb">insert data into table</string>
     <string name="str_query">query table</string>
+    <string name="str_forecast">预报</string>
+    <string name="str_aqi">空气质量</string>
+    <string name="str_suggestion">生活建议</string>
 </resources>

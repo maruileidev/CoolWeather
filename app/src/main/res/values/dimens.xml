@@ -3,4 +3,8 @@
     <dimen name="mediumsize">20sp</dimen>
     <dimen name="smalldimen">10dp</dimen>
     <dimen name="bigdimen">35dp</dimen>
+    <dimen name="bigsize">60sp</dimen>
+    <dimen name="dim20">20dp</dimen>
+    <dimen name="dim15">15dp</dimen>
+    <dimen name="dim10">10dp</dimen>
 </resources>
