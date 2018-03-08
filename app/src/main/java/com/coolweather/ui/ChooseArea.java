@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.view.GravityCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -83,11 +84,18 @@ public class ChooseArea extends Fragment {
                         queryCounty();
                         break;
                     case level_County:
-                        String weatherId=countyList.get(position).getWeatherId();
-                        Intent intent=new Intent(getActivity(),WeatherActivity.class);
-                        intent.putExtra("weatherId",weatherId);
-                        startActivity(intent);
-                        getActivity().finish();
+                        String weatherId = countyList.get(position).getWeatherId();
+                        if (getActivity() instanceof MainActivity) {
+                            Intent intent = new Intent(getActivity(), WeatherActivity.class);
+                            intent.putExtra("weatherId", weatherId);
+                            startActivity(intent);
+                            getActivity().finish();
+                        } else if (getActivity() instanceof WeatherActivity) {
+                            WeatherActivity activity= (WeatherActivity) getActivity();
+                            activity.drawerLayout.closeDrawer(GravityCompat.START);
+                            activity.swipeRefreshLayout.setRefreshing(true);
+                            activity.requestWeather(weatherId);
+                        }
                         break;
                 }
             }
@@ -197,14 +205,13 @@ public class ChooseArea extends Fragment {
                     });
                 }
             }
-
             @Override
             public void onFailure(Call call, IOException e) {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         closeProgressDialog();
-                        Toast.makeText(getActivity(),"Loading failed",Toast.LENGTH_LONG);
+                        Toast.makeText(getActivity(), "Loading failed", Toast.LENGTH_LONG);
                     }
                 });
             }
@@ -212,7 +219,7 @@ public class ChooseArea extends Fragment {
     }
 
     private void showProgressDialog() {
-        if(progressDialog==null) {
+        if (progressDialog == null) {
             progressDialog = new ProgressDialog(getActivity());
             progressDialog.setMessage("Loading,wait a moment....");
             progressDialog.setCanceledOnTouchOutside(false);
@@ -221,7 +228,7 @@ public class ChooseArea extends Fragment {
     }
 
     private void closeProgressDialog() {
-        if(progressDialog!=null){
+        if (progressDialog != null) {
             progressDialog.dismiss();
         }
     }
