@@ -9,7 +9,6 @@ import android.support.v4.view.GravityCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -52,7 +51,6 @@ public class ChooseArea extends Fragment {
     private int level_Current;
     private Province selectedProvince;
     private City selectedCity;
-    private County selectedCounty;
     private String url;
     private ProgressDialog progressDialog;
 
@@ -71,43 +69,37 @@ public class ChooseArea extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                switch (level_Current) {
-                    case level_Province:
-                        selectedProvince = provinceList.get(position);
-                        queryCity();
-                        break;
-                    case level_City:
-                        selectedCity = cityList.get(position);
-                        queryCounty();
-                        break;
-                    case level_County:
-                        String weatherId = countyList.get(position).getWeatherId();
-                        if (getActivity() instanceof MainActivity) {
-                            Intent intent = new Intent(getActivity(), WeatherActivity.class);
-                            intent.putExtra("weatherId", weatherId);
-                            startActivity(intent);
-                            getActivity().finish();
-                        } else if (getActivity() instanceof WeatherActivity) {
-                            WeatherActivity activity= (WeatherActivity) getActivity();
-                            activity.drawerLayout.closeDrawer(GravityCompat.START);
-                            activity.swipeRefreshLayout.setRefreshing(true);
-                            activity.requestWeather(weatherId);
-                        }
-                        break;
-                }
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+            switch (level_Current) {
+                case level_Province:
+                    selectedProvince = provinceList.get(position);
+                    queryCity();
+                    break;
+                case level_City:
+                    selectedCity = cityList.get(position);
+                    queryCounty();
+                    break;
+                case level_County:
+                    String weatherId = countyList.get(position).getWeatherId();
+                    if (getActivity() instanceof MainActivity) {
+                        Intent intent = new Intent(getActivity(), WeatherActivity.class);
+                        intent.putExtra("weatherId", weatherId);
+                        startActivity(intent);
+                        getActivity().finish();
+                    } else if (getActivity() instanceof WeatherActivity) {
+                        WeatherActivity activity = (WeatherActivity) getActivity();
+                        activity.drawerLayout.closeDrawer(GravityCompat.START);
+                        activity.swipeRefreshLayout.setRefreshing(true);
+                        activity.requestWeather(weatherId);
+                    }
+                    break;
             }
         });
-        btn_back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (level_Current == level_County) {
-                    queryCity();
-                } else if (level_Current == level_City) {
-                    queryProvince();
-                }
+        btn_back.setOnClickListener(v -> {
+            if (level_Current == level_County) {
+                queryCity();
+            } else if (level_Current == level_City) {
+                queryProvince();
             }
         });
         queryProvince();
@@ -160,7 +152,6 @@ public class ChooseArea extends Fragment {
             }
             adapter.notifyDataSetChanged();
             level_Current = level_County;
-            selectedCounty = countyList.get(0);
         } else {
             url = "http://guolin.tech/api/china/" + selectedProvince.getProvinceCode() + "/" + selectedCity.getCityCode();
             queryFromServer(url, "county");
@@ -186,33 +177,28 @@ public class ChooseArea extends Fragment {
                         break;
                 }
                 if (result) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            closeProgressDialog();
-                            switch (type) {
-                                case "province":
-                                    queryProvince();
-                                    break;
-                                case "city":
-                                    queryCity();
-                                    break;
-                                case "county":
-                                    queryCounty();
-                                    break;
-                            }
+                    getActivity().runOnUiThread(() -> {
+                        closeProgressDialog();
+                        switch (type) {
+                            case "province":
+                                queryProvince();
+                                break;
+                            case "city":
+                                queryCity();
+                                break;
+                            case "county":
+                                queryCounty();
+                                break;
                         }
                     });
                 }
             }
+
             @Override
             public void onFailure(Call call, IOException e) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        closeProgressDialog();
-                        Toast.makeText(getActivity(), "Loading failed", Toast.LENGTH_LONG);
-                    }
+                getActivity().runOnUiThread(() -> {
+                    closeProgressDialog();
+                    Toast.makeText(getActivity(), "Loading failed", Toast.LENGTH_LONG);
                 });
             }
         });
